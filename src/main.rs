@@ -99,13 +99,14 @@ async fn run() {
         .expect("create device");
     let surface_caps = surface.get_capabilities(&adapter);
     let surface_format = surface_caps.formats[0];
+    let surface_alpha_mode = pick_alpha_mode(&surface_caps.alpha_modes);
     let config = wgpu::SurfaceConfiguration {
         usage: wgpu::TextureUsages::RENDER_ATTACHMENT,
         format: surface_format,
         width: size.width.max(1),
         height: size.height.max(1),
         present_mode: wgpu::PresentMode::Fifo,
-        alpha_mode: surface_caps.alpha_modes[0],
+        alpha_mode: surface_alpha_mode,
         view_formats: vec![],
         desired_maximum_frame_latency: 2,
     };
@@ -260,4 +261,18 @@ async fn run() {
             _ => {}
         }
     });
+}
+
+fn pick_alpha_mode(modes: &[wgpu::CompositeAlphaMode]) -> wgpu::CompositeAlphaMode {
+    let preferred = [
+        wgpu::CompositeAlphaMode::PreMultiplied,
+        wgpu::CompositeAlphaMode::PostMultiplied,
+        wgpu::CompositeAlphaMode::Inherit,
+        wgpu::CompositeAlphaMode::Opaque,
+    ];
+
+    preferred
+        .into_iter()
+        .find(|mode| modes.contains(mode))
+        .unwrap_or(wgpu::CompositeAlphaMode::Opaque)
 }
