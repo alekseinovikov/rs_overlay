@@ -1,0 +1,15 @@
+[package]
+name = "rs_overlay"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+egui = "0.27"
+egui-wgpu = "0.27"
+egui-winit = "0.27"
+pollster = "0.3"
+wgpu = "0.19"
+winit = "0.29"
+
+[target.'cfg(windows)'.dependencies]
+windows-sys = { version = "0.52", features = ["Win32_Foundation", "Win32_UI_WindowsAndMessaging"] }
