@@ -5,7 +5,7 @@ mod platform;
 use winit::{
     event::{Event, WindowEvent},
     event_loop::{ControlFlow, EventLoop},
-    window::{WindowBuilder, WindowLevel},
+    window::{Fullscreen, WindowBuilder, WindowLevel},
 };
 
 struct RenderState {
@@ -60,6 +60,8 @@ async fn run() {
     let window = Arc::new(
         WindowBuilder::new()
             .with_title("rs_overlay")
+            .with_decorations(false)
+            .with_resizable(false)
             .with_transparent(true)
             .with_window_level(WindowLevel::AlwaysOnTop)
             .build(&event_loop)
@@ -67,6 +69,10 @@ async fn run() {
     );
 
     platform::configure_overlay(&window);
+
+    if let Some(monitor) = window.primary_monitor() {
+        window.set_fullscreen(Some(Fullscreen::Borderless(Some(monitor))));
+    }
 
     let size = window.inner_size();
     let instance = wgpu::Instance::default();
@@ -148,12 +154,12 @@ async fn run() {
                         let raw_input = egui_state.state.take_egui_input(&window);
                         let full_output = egui_state.ctx.run(raw_input, |ctx| {
                             let fps_text = format!("FPS: {:.1}", fps_tracker.fps());
-                            egui::Window::new("Overlay")
-                                .title_bar(false)
-                                .resizable(false)
-                                .interactable(false)
+                            egui::Area::new(egui::Id::new("fps_overlay"))
+                                .fixed_pos(egui::pos2(12.0, 12.0))
                                 .show(ctx, |ui| {
-                                    ui.label(fps_text);
+                                    egui::Frame::none().show(ui, |ui| {
+                                        ui.label(egui::RichText::new(fps_text).size(18.0));
+                                    });
                                 });
                         });
 
