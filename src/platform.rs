@@ -1,6 +1,5 @@
 #[cfg(windows)]
 mod windows {
-    use windows_sys::Win32::Graphics::Dwm::{DwmExtendFrameIntoClientArea, MARGINS};
     use windows_sys::Win32::UI::WindowsAndMessaging::{
         GWL_EXSTYLE, GetWindowLongW, LWA_ALPHA, SetLayeredWindowAttributes, SetWindowLongW,
         WS_EX_LAYERED, WS_EX_NOACTIVATE, WS_EX_TOOLWINDOW, WS_EX_TRANSPARENT,
@@ -22,13 +21,6 @@ mod windows {
                 | (WS_EX_LAYERED | WS_EX_TRANSPARENT | WS_EX_TOOLWINDOW | WS_EX_NOACTIVATE) as i32;
             let _ = SetWindowLongW(hwnd, GWL_EXSTYLE, new_style);
             let _ = SetLayeredWindowAttributes(hwnd, 0, 255, LWA_ALPHA);
-            let margins = MARGINS {
-                cxLeftWidth: -1,
-                cxRightWidth: 0,
-                cyTopHeight: 0,
-                cyBottomHeight: 0,
-            };
-            let _ = DwmExtendFrameIntoClientArea(hwnd, &margins);
         }
     }
 }
