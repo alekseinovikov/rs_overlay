@@ -1,6 +1,8 @@
 use std::{sync::Arc, time::Instant};
 
 mod platform;
+#[cfg(windows)]
+mod windows;
 
 use winit::{
     dpi::{PhysicalPosition, PhysicalSize},
@@ -56,6 +58,12 @@ impl FpsTracker {
 }
 
 fn main() {
+    #[cfg(windows)]
+    {
+        windows::run().expect("windows overlay failed");
+        return;
+    }
+
     pollster::block_on(run());
 }
 
