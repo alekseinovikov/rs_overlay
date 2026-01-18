@@ -1520,10 +1520,12 @@ dependencies = [
  "egui",
  "egui-wgpu",
  "egui-winit",
+ "objc2 0.6.3",
  "pollster",
  "wgpu",
  "windows-sys 0.52.0",
  "winit",
+ "x11rb",
 ]
 
 [[package]]
