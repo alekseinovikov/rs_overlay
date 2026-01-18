@@ -3,9 +3,10 @@ use std::{sync::Arc, time::Instant};
 mod platform;
 
 use winit::{
+    dpi::{PhysicalPosition, PhysicalSize},
     event::{Event, WindowEvent},
     event_loop::{ControlFlow, EventLoop},
-    window::{Fullscreen, WindowBuilder, WindowLevel},
+    window::{WindowBuilder, WindowLevel},
 };
 
 struct RenderState {
@@ -71,7 +72,10 @@ async fn run() {
     platform::configure_overlay(&window);
 
     if let Some(monitor) = window.primary_monitor() {
-        window.set_fullscreen(Some(Fullscreen::Borderless(Some(monitor))));
+        let position: PhysicalPosition<i32> = monitor.position();
+        let size: PhysicalSize<u32> = monitor.size();
+        window.as_ref().set_outer_position(position);
+        let _ = window.as_ref().request_inner_size(size);
     }
 
     let size = window.inner_size();
