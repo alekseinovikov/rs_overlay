@@ -1,8 +1,8 @@
 #[cfg(windows)]
 mod windows {
     use windows_sys::Win32::UI::WindowsAndMessaging::{
-        GWL_EXSTYLE, GetWindowLongW, LWA_ALPHA, SetLayeredWindowAttributes, SetWindowLongW,
-        WS_EX_LAYERED, WS_EX_NOACTIVATE, WS_EX_TOOLWINDOW, WS_EX_TRANSPARENT,
+        GWL_EXSTYLE, GetWindowLongW, SetWindowLongW, WS_EX_NOACTIVATE, WS_EX_TOOLWINDOW,
+        WS_EX_TRANSPARENT,
     };
     use winit::raw_window_handle::{HasWindowHandle, RawWindowHandle};
 
@@ -17,10 +17,9 @@ mod windows {
         };
         unsafe {
             let ex_style = GetWindowLongW(hwnd, GWL_EXSTYLE);
-            let new_style = ex_style
-                | (WS_EX_LAYERED | WS_EX_TRANSPARENT | WS_EX_TOOLWINDOW | WS_EX_NOACTIVATE) as i32;
+            let new_style =
+                ex_style | (WS_EX_TRANSPARENT | WS_EX_TOOLWINDOW | WS_EX_NOACTIVATE) as i32;
             let _ = SetWindowLongW(hwnd, GWL_EXSTYLE, new_style);
-            let _ = SetLayeredWindowAttributes(hwnd, 0, 255, LWA_ALPHA);
         }
     }
 }

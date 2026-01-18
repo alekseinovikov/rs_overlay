@@ -9,6 +9,9 @@ use winit::{
     window::{WindowBuilder, WindowLevel},
 };
 
+#[cfg(windows)]
+use winit::platform::windows::WindowBuilderExtWindows;
+
 struct RenderState {
     device: wgpu::Device,
     queue: wgpu::Queue,
@@ -58,16 +61,20 @@ fn main() {
 
 async fn run() {
     let event_loop = EventLoop::new().expect("create event loop");
-    let window = Arc::new(
-        WindowBuilder::new()
-            .with_title("rs_overlay")
-            .with_decorations(false)
-            .with_resizable(false)
-            .with_transparent(true)
-            .with_window_level(WindowLevel::AlwaysOnTop)
-            .build(&event_loop)
-            .expect("create window"),
-    );
+    let mut builder = WindowBuilder::new();
+    builder = builder
+        .with_title("rs_overlay")
+        .with_decorations(false)
+        .with_resizable(false)
+        .with_transparent(true)
+        .with_window_level(WindowLevel::AlwaysOnTop);
+    #[cfg(windows)]
+    {
+        builder = builder
+            .with_no_redirection_bitmap(true)
+            .with_skip_taskbar(true);
+    }
+    let window = Arc::new(builder.build(&event_loop).expect("create window"));
 
     platform::configure_overlay(&window);
 
